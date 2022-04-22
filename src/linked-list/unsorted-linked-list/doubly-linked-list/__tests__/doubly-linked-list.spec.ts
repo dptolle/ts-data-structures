@@ -1,10 +1,10 @@
-import { DefaultSinglyLinkedList, SinglyLinkedList } from '../singly-linked-list';
+import { GenericDoublyLinkedList, DoublyLinkedList } from '../doubly-linked-list';
 
-describe('Singly Linked List', () => {
-    let list: SinglyLinkedList<number>;
+describe('Doubly Linked List', () => {
+    let list: DoublyLinkedList<number>;
 
     beforeEach(() => {
-        list = new DefaultSinglyLinkedList<number>();
+        list = new GenericDoublyLinkedList<number>();
     });
 
     it('should return a count of 0', () => {
@@ -65,6 +65,8 @@ describe('Singly Linked List', () => {
         list.addHead(4);
         list.addHead(5);
         const found = list.find(4);
+        expect(found.next.value).toBe(3);
+        expect(found.previous.value).toBe(5);
         expect(found.value).toBe(4);
     });
 
@@ -86,6 +88,12 @@ describe('Singly Linked List', () => {
         list.addHead(5);
         const removed = list.remove(3);
         expect(removed.value).toBe(3);
+        const previous = list.find(4);
+        const next = list.find(2);
+        expect(previous.value).toBe(4);
+        expect(previous.next.value).toBe(2);
+        expect(next.value).toBe(2);
+        expect(next.previous.value).toBe(4);
         expect(list.count).toEqual(4);
     });
 
@@ -113,7 +121,21 @@ describe('Singly Linked List', () => {
         expect(list.count).toEqual(4);
     });
 
-    it('should be able to iterate over list', () => {
+    it('should remove the tail node of an object list', () => {
+        const specialList = new GenericDoublyLinkedList<{ name: string }>();
+        specialList.addHead({ name: 'bob' });
+        specialList.addHead({ name: 'kate' });
+        specialList.addHead({ name: 'henry' });
+        const comparator = (a, b) => {
+            return a.name === b.name;
+        }
+        const removed = specialList.remove({ name: 'bob' }, comparator);
+        expect(removed.value).toEqual({ name: 'bob' });
+        expect(specialList.tail.value).toEqual({ name: 'kate' });
+        expect(specialList.count).toEqual(2);
+    });
+
+    it('should be able to iterate over list from head', () => {
         list.addHead(5);
         list.addHead(4);
         list.addHead(3);
@@ -121,6 +143,19 @@ describe('Singly Linked List', () => {
         list.addHead(1);
         let count = 1;
         for (let item of list) {
+            expect(item.value).toBe(count);
+            count++;
+        }
+    });
+
+    it('should be able to iterate over list from tail', () => {
+        list.addHead(1);
+        list.addHead(2);
+        list.addHead(3);
+        list.addHead(4);
+        list.addHead(5);
+        let count = 1;
+        for (let item of list.getReverseIterator()) {
             expect(item.value).toBe(count);
             count++;
         }

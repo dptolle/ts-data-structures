@@ -1,10 +1,10 @@
-import { DefaultDoublyLinkedList, DoublyLinkedList } from '../doubly-linked-list';
+import { GenericSinglyLinkedList, SinglyLinkedList } from '../singly-linked-list';
 
-describe('Doubly Linked List', () => {
-    let list: DoublyLinkedList<number>;
+describe('Singly Linked List', () => {
+    let list: SinglyLinkedList<number>;
 
     beforeEach(() => {
-        list = new DefaultDoublyLinkedList<number>();
+        list = new GenericSinglyLinkedList<number>();
     });
 
     it('should return a count of 0', () => {
@@ -113,6 +113,19 @@ describe('Doubly Linked List', () => {
         expect(list.count).toEqual(4);
     });
 
+    it('should remove the tail node of an object list', () => {
+        const specialList = new GenericSinglyLinkedList<{ name: string }>();
+        specialList.addHead({ name: 'bob' });
+        specialList.addHead({ name: 'kate' });
+        specialList.addHead({ name: 'henry' });
+        const comparator = (a, b) => {
+            return a.name === b.name;
+        }
+        const removed = specialList.remove({ name: 'bob' }, comparator);
+        expect(removed.value).toEqual({ name: 'bob' });
+        expect(specialList.tail.value).toEqual({ name: 'kate' });
+        expect(specialList.count).toEqual(2);
+    });
     it('should be able to iterate over list', () => {
         list.addHead(5);
         list.addHead(4);
